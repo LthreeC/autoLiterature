@@ -1,0 +1,54 @@
+# 操作系统生成的文件
+.DS_Store                # macOS 的 Finder 特定文件
+Thumbs.db                # Windows 的文件预览
+desktop.ini              # Windows 的桌面配置
+
+# Python
+__pycache__/             # Python 编译后的字节码
+*.pyc                    # Python 编译的 .pyc 文件
+*.pyo                    # Python 优化后的 .pyo 文件
+*.pyd                    # Python 动态库文件
+*.egg                    # Egg 文件（Python 包格式）
+*.egg-info/              # Egg 信息目录
+*.whl                    # Wheel 文件
+pip-wheel-metadata/      # pip 构建 wheel 时的元数据
+env/                      # 虚拟环境目录（如 venv, .env）
+.venv/
+venv/
+
+# Node.js
+node_modules/            # Node.js 依赖目录
+npm-debug.log            # npm 调试日志
+yarn-debug.log           # yarn 调试日志
+yarn-error.log           # yarn 错误日志
+
+# Java
+*.class                  # Java 编译后的类文件
+*.jar                    # Java 可执行包
+*.war                    # Web 应用包
+*.ear                    # 企业应用包
+
+# 编译和构建工具生成的文件
+build/                   # 构建目录
+dist/                    # 发布目录
+out/                     # 输出目录
+*.log                    # 日志文件
+
+# IDE / 编辑器配置
+.vscode/                 # Visual Studio Code 配置目录
+.idea/                   # JetBrains IDE 配置目录（如 PyCharm, IntelliJ）
+*.sublime-project        # Sublime Text 项目文件
+*.sublime-workspace      # Sublime Text 工作区文件
+
+# 其他编辑器
+*.swp                    # Vim 交换文件
+*.swo                    # Vim 交换文件
+*.bak                    # 编辑器备份文件
+*.tmp                    # 临时文件
+
+# macOS 特定的文件
+.AppleDouble/            # macOS 双重文件
+.LSOverride              # macOS 文件系统特殊文件
+
+# todo文件
+todo.md

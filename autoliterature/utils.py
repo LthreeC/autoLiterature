@@ -122,6 +122,7 @@ def get_update_content(m, note_file, pdfs_path, proxy):
             
             if pdf:
                 if not os.path.exists(pdf_path):
+                    print("[DEBUG]----------:", "pdf_link", bib['pdf_link'])
                     get_paper_pdf_from_paperid(literature_id, pdf_path, direct_url=bib['pdf_link'], proxy=proxy)
                     if not os.path.exists(pdf_path):
                         get_paper_pdf_from_paperid(literature_id, pdf_path, proxy=proxy)

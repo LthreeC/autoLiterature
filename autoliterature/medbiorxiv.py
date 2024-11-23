@@ -64,7 +64,7 @@ class BMxivInfo(object):
             "pdf_link": f"{paper_url}.full.pdf",
             "cited_count": None
         }
-        
+            
         return bib_dict
 
 
@@ -86,6 +86,8 @@ class BMxivInfo(object):
             None
         """
         urls = [self.base_url + server + "/" + bmrxivid for server in self.servers]
+
+
         for url in urls:
             try:
                 r = self.sess.get(url)
@@ -94,12 +96,12 @@ class BMxivInfo(object):
                 
                 if "published" in bib.keys() and bib['published'] != "NA":
                     doi = bib["published"]
-                    print(doi)
+                    # print(doi)
                     crossref_info = crossrefInfo()
                     if len(self.sess.proxies) > 0:
                         crossref_info.set_proxy(self.sess.proxies['http'].split('//')[-1])
                     return crossref_info.get_info_by_doi(doi)
-                 
+
                 return self.extract_json_info(bib)
                 
             except:

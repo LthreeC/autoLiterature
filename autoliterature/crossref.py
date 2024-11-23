@@ -67,6 +67,15 @@ class crossrefInfo(object):
             "cited_count": bib["is-referenced-by-count"]
         } 
         
+        
+        # FIX 这里特判journals的pdf位置
+        base_url = "https://journals.plos.org/plosone/article/file"
+        if "https://dx.plos.org/" in bib_dict["pdf_link"]:
+            identifier = bib_dict["pdf_link"].split("https://dx.plos.org/")[-1]
+            bib_dict["pdf_link"] = f"{base_url}?id={identifier}&type=printable"
+
+        # print("[DEBUG]----------:", "bib_dict", bib_dict)    
+        
         return bib_dict
 
 
