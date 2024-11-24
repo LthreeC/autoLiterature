@@ -33,12 +33,12 @@ class patternRecognizer(object):
 
 
 def note_modified(pattern_recog, md_file, **replace_dict):
-    with open(md_file, "r") as f:
+    with open(md_file, "r", encoding='utf-8') as f:
         content = f.read()
 
     replaced_content = pattern_recog.multiple_replace(content, **replace_dict)
 
-    with open(md_file, "w") as f:
+    with open(md_file, "w", encoding='utf-8') as f:
         f.write("".join(replaced_content))
 
 
@@ -112,6 +112,8 @@ def get_update_content(matchs, note_file, pdfs_path, proxy):
 
         literature_id = literature.split("{")[-1].split("}")[0]
         bib = get_paper_info_from_paperid(literature_id, proxy=proxy)
+        # rep \n with ' ' in title
+        bib["title"] = bib["title"].replace("\n", " ")
 
         try:
             pdf_name = literature_id + "__" +  "_".join(bib["title"].split(" ")) + ".pdf"
@@ -131,7 +133,7 @@ def get_update_content(matchs, note_file, pdfs_path, proxy):
 
             if os.path.exists(pdf_path):
                 # FIX 这里start需要是文件夹路径?
-                print("[DEBUG]----------: file!!", pdf_path, note_file, os.path.relpath(path=pdf_path, start=os.path.dirname(note_file)))
+                # print("[DEBUG]----------: file!!", pdf_path, note_file, os.path.relpath(path=pdf_path, start=os.path.dirname(note_file)))
                 replaced_literature = (
                     "### {}\n{} et al. **{}**, **{}**, ([pdf]({}))([link]({})). [{}]".format(
                         bib["title"],

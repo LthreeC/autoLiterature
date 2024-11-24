@@ -52,3 +52,6 @@ out/                     # 输出目录
 
 # todo文件
 todo.md
+
+# regular文件
+*_RECORD_
