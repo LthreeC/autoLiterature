@@ -44,7 +44,7 @@ def classify(identifier):
     
 def get_paper_info_from_paperid(paper_id, proxy=None):
     id_type = classify(paper_id)
-    
+
     if id_type == "doi":
         downloader = crossrefInfo()
         if proxy:

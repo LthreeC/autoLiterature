@@ -135,7 +135,7 @@ def get_update_content(matchs, note_file, pdfs_path, proxy):
                 # FIX 这里start需要是文件夹路径?
                 # print("[DEBUG]----------: file!!", pdf_path, note_file, os.path.relpath(path=pdf_path, start=os.path.dirname(note_file)))
                 replaced_literature = (
-                    "### {}\n{} et al. **{}**, **{}**, ([pdf]({}))([link]({})). [{}]".format(
+                    "- **{}** {} et al. **{}**, **{}**, ([Pdf]({}))([Link]({})) {{{{{}}}}}".format(
                         bib["title"],
                         bib["author"].split(" and ")[0],
                         bib["journal"],
@@ -147,7 +147,7 @@ def get_update_content(matchs, note_file, pdfs_path, proxy):
                 )
             else:
                 replaced_literature = (
-                    "### {}\n{} et al. **{}**, **{}**, ([link]({})). [{}]".format(
+                    "- **{}** {} et al. **{}**, **{}**, ([Link]({})) {{{{{}}}}}".format(
                         bib["title"],
                         bib["author"].split(" and ")[0],
                         bib["journal"],

@@ -22,6 +22,9 @@ def set_args():
                         'when used, -i must be a folder path including all notes')
     parser.add_argument('-m', '--migration', type=str, default=None, 
                         help="the pdf folder path you want to reconnect to")
+    
+    parser.add_argument('-ao', '--auto-output', action='store_true', help='auto mkdir for output path')
+    
     args = parser.parse_args()
     
     return args 
@@ -33,13 +36,22 @@ def check_args():
     delete_bool = args.delete
     migration_path = args.migration
     proxy = args.proxy
-        
-    return input_path, output_path, delete_bool, proxy, migration_path
-
-
-def get_bib_and_pdf(note_file, output_path, proxy, paper_recognizer):
     
-    pdfs_path = output_path
+    auto_mode = args.auto_output
+        
+    return input_path, output_path, delete_bool, proxy, migration_path, auto_mode
+
+
+def get_bib_and_pdf(note_file, output_path, proxy, paper_recognizer, auto_mode):
+    if auto_mode:
+        # 获取文件的目录和文件名（不带扩展名）
+        base_dir = os.path.dirname(note_file)
+        file_name_without_ext = os.path.splitext(os.path.basename(note_file))[0]
+        # 构建新文件夹路径
+        pdfs_path = os.path.join(base_dir, file_name_without_ext)
+    else:
+        pdfs_path = output_path
+    
     if not os.path.exists(pdfs_path):
         os.makedirs(pdfs_path)
     
@@ -58,24 +70,24 @@ def get_bib_and_pdf(note_file, output_path, proxy, paper_recognizer):
         return replace_dict
 
 
-def file_update(input_path, output_path, proxy, paper_recognizer):
+def file_update(input_path, output_path, proxy, paper_recognizer, auto_mode):
     
     replace_dict =  get_bib_and_pdf(input_path, output_path,
-                                    proxy, paper_recognizer)
+                                    proxy, paper_recognizer, auto_mode)
     
     if replace_dict:
         note_modified(paper_recognizer, input_path, **replace_dict)
 
 
 def main():
-    input_path, output_path, delete_bool, proxy, migration_path = check_args()
+    input_path, output_path, delete_bool, proxy, migration_path, auto_mode = check_args()
     
-    if output_path:
+    if output_path or auto_mode:
         paper_recognizer = patternRecognizer(r'- \{.{3,}\}')
         
         if os.path.isfile(input_path):
             logger.info("正在更新文件 {}".format(input_path))
-            file_update(input_path, output_path, proxy, paper_recognizer)
+            file_update(input_path, output_path, proxy, paper_recognizer, auto_mode)
             
         elif os.path.isdir(input_path):
             note_paths = []
@@ -85,13 +97,16 @@ def main():
                         note_paths.append(os.path.join(root, file))
             for note_path in note_paths:
                 logger.info("正在更新文件 {}".format(note_path))
-                file_update(note_path, output_path, proxy, paper_recognizer)
+                file_update(note_path, output_path, proxy, paper_recognizer, auto_mode)
         else:
             logger.info("input path {} is not exists".format(input_path))
     
     
         # Delete unreferenced attachments
         if delete_bool:
+            # pass，暂时不用这个参数
+            pass
+
             if os.path.isfile(input_path):
                 logger.info("若要删除笔记无关PDF实体, 输入的路径必须是笔记总文件夹!!!请谨慎使用该参数!!!")
             else:
@@ -142,7 +157,7 @@ def main():
         logger.info("共匹配到 - {} - 个PDF文件".format(matched_numb))
         
 
-    if not output_path and not migration_path:
+    if not output_path and not migration_path and not auto_mode:
         logger.info("缺少关键参数 -o 或者 -m, 程序未运行, 请使用 -h 查看具体信息")
 
 

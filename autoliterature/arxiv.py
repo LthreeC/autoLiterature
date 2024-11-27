@@ -105,17 +105,22 @@ class arxivInfo(object):
             items = result.entries
 
             item = items[0]
-            if "arxiv_doi" in item:
-                doi = item["arxiv_doi"]
+            
+            # TODO 这里看到arxiv还要再看doi，目前没这个需求
+            # if "arxiv_doi" in item:
+            #     doi = item["arxiv_doi"]
 
-                crossref_info = crossrefInfo()
-                if handler:
-                    crossref_info.set_proxy(
-                        proxy=handler.proxies["http"].split("//")[-1]
-                    )
-                return crossref_info.get_info_by_doi(doi)
-            else:
-                return self.extract_json_info(item)
+            #     crossref_info = crossrefInfo()
+            #     if handler:
+            #         crossref_info.set_proxy(
+            #             proxy=handler.proxies["http"].split("//")[-1]
+            #         )
+            #     print("[DEBUG]----------: doi", doi)
+
+            #     return crossref_info.get_info_by_doi(doi)
+            # else:
+            return self.extract_json_info(item)
+            
         except:
             logger.error("DOI: {} is error.".format(arxivId))
 

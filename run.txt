@@ -1,0 +1,5 @@
+python -m autoliterature.autoliter -i ../_TS/autoliter/note/ts.md -o ../_TS/autoliter/output
+
+python -m autoliterature.autoliter -i ../_TS/autoliter/note/ts.md -ao
+
+autoliter -i ../_TS/autoliter/note -ao
