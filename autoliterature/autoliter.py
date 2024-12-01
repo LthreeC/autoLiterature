@@ -24,6 +24,7 @@ def set_args():
                         help="the pdf folder path you want to reconnect to")
     
     parser.add_argument('-ao', '--auto-output', action='store_true', help='auto mkdir for output path')
+    parser.add_argument("-n", "--no-pdf", action="store_true", help="Don't download pdfs")
     
     args = parser.parse_args()
     
@@ -38,22 +39,26 @@ def check_args():
     proxy = args.proxy
     
     auto_mode = args.auto_output
+    no_pdf = args.no_pdf
         
-    return input_path, output_path, delete_bool, proxy, migration_path, auto_mode
+    return input_path, output_path, delete_bool, proxy, migration_path, auto_mode, no_pdf
 
 
-def get_bib_and_pdf(note_file, output_path, proxy, paper_recognizer, auto_mode):
-    if auto_mode:
-        # 获取文件的目录和文件名（不带扩展名）
-        base_dir = os.path.dirname(note_file)
-        file_name_without_ext = os.path.splitext(os.path.basename(note_file))[0]
-        # 构建新文件夹路径
-        pdfs_path = os.path.join(base_dir, file_name_without_ext)
+def get_bib_and_pdf(note_file, output_path, proxy, paper_recognizer, auto_mode, no_pdf):
+    if no_pdf:
+        pdfs_path = None
     else:
-        pdfs_path = output_path
+        if auto_mode:
+            # 获取文件的目录和文件名（不带扩展名）
+            base_dir = os.path.dirname(note_file)
+            file_name_without_ext = os.path.splitext(os.path.basename(note_file))[0]
+            # 构建新文件夹路径
+            pdfs_path = os.path.join(base_dir, file_name_without_ext)
+        else:
+            pdfs_path = output_path
     
-    if not os.path.exists(pdfs_path):
-        os.makedirs(pdfs_path)
+        if not os.path.exists(pdfs_path):
+            os.makedirs(pdfs_path)
     
     with open(note_file, 'r', encoding='utf-8') as f:
         content = f.read()
@@ -70,24 +75,24 @@ def get_bib_and_pdf(note_file, output_path, proxy, paper_recognizer, auto_mode):
         return replace_dict
 
 
-def file_update(input_path, output_path, proxy, paper_recognizer, auto_mode):
+def file_update(input_path, output_path, proxy, paper_recognizer, auto_mode, no_pdf):
     
     replace_dict =  get_bib_and_pdf(input_path, output_path,
-                                    proxy, paper_recognizer, auto_mode)
+                                    proxy, paper_recognizer, auto_mode, no_pdf)
     
     if replace_dict:
         note_modified(paper_recognizer, input_path, **replace_dict)
 
 
 def main():
-    input_path, output_path, delete_bool, proxy, migration_path, auto_mode = check_args()
+    input_path, output_path, delete_bool, proxy, migration_path, auto_mode, no_pdf = check_args()
     
     if output_path or auto_mode:
         paper_recognizer = patternRecognizer(r'- \{.{3,}\}')
         
         if os.path.isfile(input_path):
             logger.info("正在更新文件 {}".format(input_path))
-            file_update(input_path, output_path, proxy, paper_recognizer, auto_mode)
+            file_update(input_path, output_path, proxy, paper_recognizer, auto_mode, no_pdf)
             
         elif os.path.isdir(input_path):
             note_paths = []
@@ -97,7 +102,7 @@ def main():
                         note_paths.append(os.path.join(root, file))
             for note_path in note_paths:
                 logger.info("正在更新文件 {}".format(note_path))
-                file_update(note_path, output_path, proxy, paper_recognizer, auto_mode)
+                file_update(note_path, output_path, proxy, paper_recognizer, auto_mode, no_pdf)
         else:
             logger.info("input path {} is not exists".format(input_path))
     

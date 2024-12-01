@@ -115,49 +115,63 @@ def get_update_content(matchs, note_file, pdfs_path, proxy):
         # rep \n with ' ' in title
         bib["title"] = bib["title"].replace("\n", " ")
 
-        try:
-            pdf_name = literature_id + "__" +  "_".join(bib["title"].split(" ")) + ".pdf"
-            # pdf_name = bib["title"] + ".pdf"
-            # rep specific symbol with '_'
-            pdf_name = re.sub(r"[<>:\"/\\|?*\n\r\x00-\x1F\x7F']", "_", pdf_name)
-            pdf_path = os.path.join(pdfs_path, pdf_name)
+        if pdfs_path:
+            try:
+                pdf_name = literature_id + "__" +  "_".join(bib["title"].split(" ")) + ".pdf"
+                # pdf_name = bib["title"] + ".pdf"
+                # rep specific symbol with '_'
+                pdf_name = re.sub(r"[<>:\"/\\|?*\n\r\x00-\x1F\x7F']", "_", pdf_name)
+                pdf_path = os.path.join(pdfs_path, pdf_name)
 
-            if pdf:
-                if not os.path.exists(pdf_path):
-                    # print("[DEBUG]----------:", "pdf_link", bib["pdf_link"])
-                    get_paper_pdf_from_paperid(
-                        literature_id, pdf_path, direct_url=bib["pdf_link"], proxy=proxy
-                    )
+                if pdf:
                     if not os.path.exists(pdf_path):
-                        get_paper_pdf_from_paperid(literature_id, pdf_path, proxy=proxy)
+                        # print("[DEBUG]----------:", "pdf_link", bib["pdf_link"])
+                        get_paper_pdf_from_paperid(
+                            literature_id, pdf_path, direct_url=bib["pdf_link"], proxy=proxy
+                        )
+                        if not os.path.exists(pdf_path):
+                            get_paper_pdf_from_paperid(literature_id, pdf_path, proxy=proxy)
 
-            if os.path.exists(pdf_path):
-                # FIX 这里start需要是文件夹路径?
-                # print("[DEBUG]----------: file!!", pdf_path, note_file, os.path.relpath(path=pdf_path, start=os.path.dirname(note_file)))
-                replaced_literature = (
-                    "- **{}** {} et al. **{}**, **{}**, ([Pdf]({}))([Link]({})) {{{{{}}}}}".format(
-                        bib["title"],
-                        bib["author"].split(" and ")[0],
-                        bib["journal"],
-                        bib["year"],
-                        os.path.relpath(pdf_path, start=os.path.dirname(note_file)).split("/", 1)[-1],
-                        bib["url"],
-                        literature_id,
+                if os.path.exists(pdf_path):
+                    # FIX 这里start需要是文件夹路径?
+                    # print("[DEBUG]----------: file!!", pdf_path, note_file, os.path.relpath(path=pdf_path, start=os.path.dirname(note_file)))
+                    replaced_literature = (
+                        "- **{}** {} et al. **{}**, **{}**, ([Pdf]({}))([Link]({})) {{{{{}}}}}".format(
+                            bib["title"],
+                            bib["author"].split(" and ")[0],
+                            bib["journal"],
+                            bib["year"],
+                            os.path.relpath(pdf_path, start=os.path.dirname(note_file)).split("/", 1)[-1],
+                            bib["url"],
+                            literature_id,
+                        )
                     )
-                )
-            else:
-                replaced_literature = (
-                    "- **{}** {} et al. **{}**, **{}**, ([Link]({})) {{{{{}}}}}".format(
-                        bib["title"],
-                        bib["author"].split(" and ")[0],
-                        bib["journal"],
-                        bib["year"],
-                        bib["url"],
-                        literature_id,
+                else:
+                    replaced_literature = (
+                        "- **{}** {} et al. **{}**, **{}**, ([Link]({})) {{{{{}}}}}".format(
+                            bib["title"],
+                            bib["author"].split(" and ")[0],
+                            bib["journal"],
+                            bib["year"],
+                            bib["url"],
+                            literature_id,
+                        )
                     )
+                replace_dict[literature] = replaced_literature
+            except:
+                logger.info("文献下载失败，已经跳过 {}".format(literature_id))
+        else: 
+            replaced_literature = (
+                "- **{}** {} et al. **{}**, **{}**, ([Link]({})) {{{{{}}}}}".format(
+                    bib["title"],
+                    bib["author"].split(" and ")[0],
+                    bib["journal"],
+                    bib["year"],
+                    bib["url"],
+                    literature_id,
                 )
+            )
             replace_dict[literature] = replaced_literature
-        except:
-            logger.info("文献下载失败，已经跳过 {}".format(literature_id))
 
     return replace_dict
+        
